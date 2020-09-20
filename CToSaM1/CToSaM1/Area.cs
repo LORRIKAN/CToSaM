@@ -6,15 +6,18 @@ namespace CToSaM1
 {
     public class Area
     {
-        public Color Color { get; set; }
-
-        static readonly Random colorRandomizer = new Random();
-
-        public int PixelsFound { get; private set; } = 0;
+        public Color Color { get; }
 
         public bool OutOfPictureRange { get; set; }
 
         public LinkedList<Pixel> Pixels { get; } = new LinkedList<Pixel>();
+
+        public int Diameter { get; }
+
+        public void CalculateDiameter()
+        {
+
+        }
 
         public Area()
         {
@@ -24,5 +27,7 @@ namespace CToSaM1
                 Color = Color.FromArgb(randomArgbColor);
             } while (Color.IsBlack() && Color.IsWhite());
         }
+
+        private static readonly Random colorRandomizer = new Random();
     }
 }

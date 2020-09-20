@@ -99,13 +99,13 @@ namespace CToSaM1
 
             int xOfUpperPixel = pixel.X - 1;
 
-            if (xOfUpperPixel >= 0)
+            if (xOfUpperPixel >= 0 && areaOfUpperPixel == null)
             {
                 int yOfUpperPixel = pixel.Y;
 
                 Pixel upperPixel = pixels[xOfUpperPixel, yOfUpperPixel];
 
-                areaOfUpperPixel = areaOfUpperPixel ?? upperPixel.Area;
+                areaOfUpperPixel = upperPixel.Area;
             }
         }
 
