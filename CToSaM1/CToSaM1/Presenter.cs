@@ -42,6 +42,8 @@ namespace CToSaM1
             this.form.GetProcessedPixelsNum += () => pixelsProcessed;
         }
 
+        public void Run() => Application.Run(form);
+
         private async void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (!e.Cancelled && e.Error == null)
@@ -83,9 +85,11 @@ namespace CToSaM1
         {
             this.pixels = new Pixel[picture.Height, picture.Width];
 
-            for (int i = 0; i < picture.Height; i++)
-                for (int j = 0; j < picture.Width; j++)
-                    pixels[i, j] = new Pixel(i, j, picture.GetPixel(j, i));
+            Parallel.For(0, picture.Height, i =>
+                Parallel.For(0, picture.Width, j =>
+                    pixels[i, j] = new Pixel(i, j, picture.GetPixel(j, i))
+                )
+            );
         }
 
         private void LoadPicture(string picturePath)
@@ -95,6 +99,28 @@ namespace CToSaM1
             InitializePixelsArray();
         }
 
-        public void Run() => Application.Run(form);
+        private Bitmap DrawPictureFromPixelsArray()
+        {
+            var drawablePicture = new Bitmap(picture.Width, picture.Height);
+
+            Parallel.For(0, picture.Height, i =>
+                Parallel.For(0, picture.Width, j =>
+                    drawablePicture.SetPixel(j, i, pixels[i, j].Color)
+                )
+            );
+
+            return drawablePicture;
+        }
+
+        private void ResetPresenter()
+        {
+            InitializePixelsArray();
+
+            coloredAreas.Clear();
+
+            stopwatch.Reset();
+
+            pixelsProcessed = 0;
+        }
     }
 }

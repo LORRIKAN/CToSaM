@@ -143,7 +143,7 @@ namespace CToSaM1
             double diametersSum = 0;
             const double mkmsInMm = 1000;
             double mkmsInPixel = ((pictureHeightInMms * mkmsInMm) * (pictureWidthInMms * mkmsInMm)) / (picture.Width * picture.Height);
-            Parallel.ForEach(coloredAreas, area => { coloredPixelsNum += area.Pixels.Count; diametersSum += area.CalculateDiameter(mkmsInPixel); }); 
+            Parallel.ForEach(coloredAreas, area => { coloredPixelsNum += area.Pixels.Count; diametersSum += area.CalculateDiameter(mkmsInPixel); });
 
             double avgDiameter = diametersSum / areasNum;
 
@@ -154,28 +154,6 @@ namespace CToSaM1
             double algorithmWorkTimeSec = stopwatch.Elapsed.TotalSeconds;
 
             return new Values(areasNum, avgDiameter, areasNumPerVolume, volumeRatio, algorithmWorkTimeSec);
-        }
-
-        private Bitmap DrawPictureFromPixelsArray()
-        {
-            var drawablePicture = new Bitmap(picture.Width, picture.Height);
-
-            for (int i = 0; i < drawablePicture.Height; i++)
-                for (int j = 0; j < drawablePicture.Width; j++)
-                    drawablePicture.SetPixel(j, i, pixels[i, j].Color);
-
-            return drawablePicture;
-        }
-
-        private void ResetPresenter()
-        {
-            InitializePixelsArray();
-
-            coloredAreas.Clear();
-
-            stopwatch.Reset();
-
-            pixelsProcessed = 0;
         }
     }
 }

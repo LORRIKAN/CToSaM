@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CToSaM1
@@ -72,7 +71,7 @@ namespace CToSaM1
                 countButt.Enabled = false;
                 menuStrip.Enabled = false;
                 progressLbl.Text = "";
-                OnPicturePathChosen.BeginInvoke(openFileDialog.FileName, callback => 
+                OnPicturePathChosen.BeginInvoke(openFileDialog.FileName, callback =>
                 {
                     pictureChosen = true;
 
