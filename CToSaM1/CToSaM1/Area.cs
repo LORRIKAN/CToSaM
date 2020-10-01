@@ -10,13 +10,15 @@ namespace CToSaM1
 
         public bool OutOfPictureRange { get; set; }
 
-        public LinkedList<Pixel> Pixels { get; } = new LinkedList<Pixel>();
+        public List<Pixel> Pixels { get; } = new List<Pixel>();
 
-        public int Diameter { get; }
-
-        public void CalculateDiameter()
+        public double CalculateDiameter(double mkmsInPixel)
         {
+            double square = Pixels.Count * mkmsInPixel;
 
+            double diameter = 2 * Math.Sqrt(square / Math.PI);
+
+            return diameter;
         }
 
         public Area()

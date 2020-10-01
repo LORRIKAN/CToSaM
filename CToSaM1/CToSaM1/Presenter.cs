@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CToSaM1
 {
-    public class Presenter
+    public partial class Presenter
     {
-        private Form Form { get; set; }
+        private readonly Form form;
 
         private readonly BackgroundWorker backgroundWorker;
 
@@ -18,147 +17,75 @@ namespace CToSaM1
 
         private Bitmap picture;
 
-        public Pixel[,] pixels;
+        private readonly Stopwatch stopwatch = new Stopwatch();
+
+        private Pixel[,] pixels;
+
+        private double pictureHeightInMms;
+
+        private double pictureWidthInMms;
+
+        private int pixelsProcessed = 0;
 
         public Presenter(Form form)
         {
             backgroundWorker = new BackgroundWorker();
-            backgroundWorker.DoWork += BackgroundWorker_DoWork;
-            backgroundWorker.ProgressChanged += BackgroundWorker_ProgressChanged;
+            backgroundWorker.DoWork += StartAlgorithm;
             backgroundWorker.RunWorkerCompleted += BackgroundWorker_RunWorkerCompleted;
             backgroundWorker.WorkerReportsProgress = true;
             backgroundWorker.WorkerSupportsCancellation = true;
 
-            Form = form;
-            Form.PicturePathChosen += LoadPicture;
-            Form.ProceedCalculatingAsync += ProceedCalculating;
-            Form.AbortCalculating += AbortCalculating;
+            this.form = form;
+            this.form.OnPicturePathChosen += LoadPicture;
+            this.form.ProceedCalculatingAsync += StartCalculating;
+            this.form.AbortCalculating += AbortCalculating;
+            this.form.GetProcessedPixelsNum += () => pixelsProcessed;
         }
 
-        private void AbortCalculating()
+        private async void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            backgroundWorker.CancelAsync();
-        }
-
-        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            var editedPicture = new Bitmap(picture.Width, picture.Height);
-
-            var a = coloredAreas.Count;
-
-            for (int i = 0; i < picture.Width; i++)
-                for (int j = 0; j < picture.Height; j++)
-                    editedPicture.SetPixel(i, j, pixels[i, j].Color);
-
-            InitializePixelsArray();
-
-            Form.CalculationCompleted(e, editedPicture);
-        }
-
-        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) => 
-            Form.IncrementProgress();
-
-        private void AreaWork(ref Area areaOfUpperPixel, LinkedList<Pixel> whitePixels)
-        {
-            if (whitePixels.Any())
+            if (!e.Cancelled && e.Error == null)
             {
-                if (areaOfUpperPixel == null)
-                {
-                    areaOfUpperPixel = new Area();
-                    coloredAreas.Add(areaOfUpperPixel);
-                }
+                Task<Bitmap> drawPictureTask = Task.Run(DrawPictureFromPixelsArray);
 
-                foreach (Pixel pixel in whitePixels)
-                {
-                    int x = pixel.X;
-                    int y = pixel.Y;
+                Values values = CalculateValues();
 
-                    pixels[x, y].Area = areaOfUpperPixel;
-                    pixels[x, y].Color = areaOfUpperPixel.Color;
+                Bitmap finalPicture = await drawPictureTask;
 
-                    if (pixel.WhiteAndBoard)
-                        areaOfUpperPixel.OutOfPictureRange = true;
+                Task resetPresenterTask = Task.Run(ResetPresenter);
 
-                    areaOfUpperPixel.Pixels.AddLast(pixel);
+                int areasNum = values.AreasNum;
+                double avgDiameter = values.AvgDiameter;
+                double areasNumPerVolume = values.AreasNumPerVolume;
+                double volumeRatio = values.VolumeRatio;
+                double algorithmWorkTimeSec = values.AlgorithmWorkTimeSec;
 
-                    backgroundWorker.ReportProgress(0);
-                }
+                await resetPresenterTask;
 
-                areaOfUpperPixel = null;
-
-                whitePixels.Clear();
+                form.OnCalculationCompleted(e, finalPicture, areasNum.ToString(), string.Format("{0:F} мкм",
+                avgDiameter), string.Format("{0:F} мкм⁻³", areasNumPerVolume), string.Format("{0:P}",
+                volumeRatio), string.Format("{0:F} с", algorithmWorkTimeSec));
             }
+            else
+                form.OnCalculationCompleted(e, null, null, null, null, null, null);
         }
 
-        private void ProcessPixel(Pixel pixel, LinkedList<Pixel> whitePixels, ref Area areaOfUpperPixel)
+        private void AbortCalculating() => backgroundWorker.CancelAsync();
+
+        private void StartCalculating(double pictureHeightInMms, double pictureWidthInMms)
         {
-            if (pixel.X == 0 || pixel.Y == 0 || pixel.X == pixels.GetUpperBound(0) || pixel.Y == pixels.GetUpperBound(1))
-                pixel.WhiteAndBoard = true;
-
-            whitePixels.AddLast(pixel);
-
-            int xOfUpperPixel = pixel.X - 1;
-
-            if (xOfUpperPixel >= 0 && areaOfUpperPixel == null)
-            {
-                int yOfUpperPixel = pixel.Y;
-
-                Pixel upperPixel = pixels[xOfUpperPixel, yOfUpperPixel];
-
-                areaOfUpperPixel = upperPixel.Area;
-            }
+            this.pictureHeightInMms = pictureHeightInMms;
+            this.pictureWidthInMms = pictureWidthInMms;
+            backgroundWorker.RunWorkerAsync();
         }
-
-        public void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var whitePixels = new LinkedList<Pixel>();
-
-            Area areaOfUpperPixel = null;
-
-            int width = pixels.GetLength(0);
-            int height = pixels.GetLength(1);
-
-            for (int i = 0; i < width; i++)
-                for (int j = 0; j < height; j++)
-                {
-                    if (backgroundWorker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    Pixel pixel = pixels[i, j];
-
-                    Color pixelColor = pixel.Color;
-
-                    if (pixelColor.IsBlack())
-                    {
-                        AreaWork(ref areaOfUpperPixel, whitePixels);
-
-                        backgroundWorker.ReportProgress(0);
-                    }
-                    else if (j == height - 1)
-                    {
-                        ProcessPixel(pixel, whitePixels, ref areaOfUpperPixel);
-
-                        AreaWork(ref areaOfUpperPixel, whitePixels);
-                    }
-                    else
-                    {
-                        ProcessPixel(pixel, whitePixels, ref areaOfUpperPixel);
-                    }
-                }
-        }
-
-        private void ProceedCalculating() => backgroundWorker.RunWorkerAsync();
 
         private void InitializePixelsArray()
         {
-            this.pixels = new Pixel[picture.Width, picture.Height];
+            this.pixels = new Pixel[picture.Height, picture.Width];
 
-            for (int i = 0; i < picture.Width; i++)
-                for (int j = 0; j < picture.Height; j++)
-                    pixels[i, j] = new Pixel(i, j, picture.GetPixel(i, j));
+            for (int i = 0; i < picture.Height; i++)
+                for (int j = 0; j < picture.Width; j++)
+                    pixels[i, j] = new Pixel(i, j, picture.GetPixel(j, i));
         }
 
         private void LoadPicture(string picturePath)
@@ -166,10 +93,8 @@ namespace CToSaM1
             this.picture = new Bitmap(picturePath);
 
             InitializePixelsArray();
-
-            Form.ShowPictureAndPrepareControls(picture);
         }
 
-        public void Run() => Application.Run(Form);
+        public void Run() => Application.Run(form);
     }
 }

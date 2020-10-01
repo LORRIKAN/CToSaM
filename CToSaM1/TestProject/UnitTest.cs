@@ -1,7 +1,5 @@
-﻿using System;
+﻿using CToSaM1;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CToSaM1;
-using System.Drawing;
 
 namespace TestProject
 {
