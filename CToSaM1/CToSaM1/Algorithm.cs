@@ -90,6 +90,7 @@ namespace CToSaM1
                     if (backgroundWorker.CancellationPending)
                     {
                         e.Cancel = true;
+                        ResetPresenter();
                         return;
                     }
 

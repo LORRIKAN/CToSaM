@@ -70,6 +70,8 @@ namespace CToSaM1
             {
                 countButt.Text = "Загрузка изображения...";
                 countButt.Enabled = false;
+                menuStrip.Enabled = false;
+                progressLbl.Text = "";
                 OnPicturePathChosen.BeginInvoke(openFileDialog.FileName, callback => 
                 {
                     pictureChosen = true;
@@ -77,6 +79,8 @@ namespace CToSaM1
                     CheckAndEnableCountButt();
 
                     countButt.Text = "Подсчитать частицы";
+
+                    menuStrip.Enabled = true;
                 }, null);
 
                 var picture = new Bitmap(openFileDialog.FileName);
