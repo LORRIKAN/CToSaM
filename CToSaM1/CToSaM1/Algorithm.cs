@@ -46,7 +46,7 @@ namespace CToSaM1
 
         private void ProcessPixel(Pixel pixel, List<Pixel> whitePixels, ref Area areaOfUpperPixel)
         {
-            if (pixel.Width == 0 || pixel.Height == 0 || pixel.Width == pixels.GetUpperBound(0) || pixel.Height == pixels.GetUpperBound(1))
+            if (pixel.Width == 0 || pixel.Height == 0 || pixel.Height == pixels.GetUpperBound(0) || pixel.Width == pixels.GetUpperBound(1))
                 pixel.WhiteAndBoard = true;
 
             whitePixels.Add(pixel);
