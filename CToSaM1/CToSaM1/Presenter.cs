@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -64,9 +65,9 @@ namespace CToSaM1
 
                 await resetPresenterTask;
 
-                form.OnCalculationCompleted(e, finalPicture, areasNum.ToString(), string.Format("{0:F} мкм",
+                form.Invoke(new Action(() => form.OnCalculationCompleted(e, finalPicture, areasNum.ToString(), string.Format("{0:F} мкм",
                 avgDiameter), string.Format("{0:F} мкм⁻³", areasNumPerVolume), string.Format("{0:P}",
-                volumeRatio), string.Format("{0:F} с", algorithmWorkTimeSec));
+                volumeRatio), string.Format("{0:F} с", algorithmWorkTimeSec))));
             }
             else
                 form.OnCalculationCompleted(e, null, null, null, null, null, null);
@@ -85,11 +86,24 @@ namespace CToSaM1
         {
             this.pixels = new Pixel[picture.Height, picture.Width];
 
-            Parallel.For(0, picture.Height, i =>
-                Parallel.For(0, picture.Width, j =>
-                    pixels[i, j] = new Pixel(i, j, picture.GetPixel(j, i))
-                )
-            );
+            for (int i = 0; i < pixels.GetLength(0); i++)
+            {
+                for (int j = 0; j < pixels.GetLength(1); j++)
+                    pixels[i, j] = new Pixel(i, j, picture.GetPixel(j, i));
+            }
+        }
+
+        private Bitmap DrawPictureFromPixelsArray()
+        {
+            var drawablePicture = new Bitmap(picture.Width, picture.Height);
+
+            for (int i = 0; i < pixels.GetLength(0); i++)
+            {
+                for (int j = 0; j < pixels.GetLength(1); j++)
+                    drawablePicture.SetPixel(j, i, pixels[i, j].Color);
+            }
+
+            return drawablePicture;
         }
 
         private void LoadPicture(string picturePath)
@@ -97,19 +111,6 @@ namespace CToSaM1
             this.picture = new Bitmap(picturePath);
 
             InitializePixelsArray();
-        }
-
-        private Bitmap DrawPictureFromPixelsArray()
-        {
-            var drawablePicture = new Bitmap(picture.Width, picture.Height);
-
-            Parallel.For(0, picture.Height, i =>
-                Parallel.For(0, picture.Width, j =>
-                    drawablePicture.SetPixel(j, i, pixels[i, j].Color)
-                )
-            );
-
-            return drawablePicture;
         }
 
         private void ResetPresenter()

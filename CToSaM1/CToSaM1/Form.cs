@@ -73,13 +73,18 @@ namespace CToSaM1
                 progressLbl.Text = "";
                 OnPicturePathChosen.BeginInvoke(openFileDialog.FileName, callback =>
                 {
-                    pictureChosen = true;
+                    Action action = () => 
+                    {
+                        pictureChosen = true;
 
-                    CheckAndEnableCountButt();
+                        CheckAndEnableCountButt();
 
-                    countButt.Text = "Подсчитать частицы";
+                        countButt.Text = "Подсчитать частицы";
 
-                    menuStrip.Enabled = true;
+                        menuStrip.Enabled = true;
+                    };
+
+                    this.Invoke(action);
                 }, null);
 
                 var picture = new Bitmap(openFileDialog.FileName);
