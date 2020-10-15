@@ -66,7 +66,7 @@ namespace CToSaM1
                 await resetPresenterTask;
 
                 form.Invoke(new Action(() => form.OnCalculationCompleted(e, finalPicture, areasNum.ToString(), string.Format("{0:F} мкм",
-                avgDiameter), string.Format("{0:F} мкм⁻³", areasNumPerVolume), string.Format("{0:P}",
+                avgDiameter), string.Format("{0:F} мм⁻³", areasNumPerVolume), string.Format("{0:P}",
                 volumeRatio), string.Format("{0:F} с", algorithmWorkTimeSec))));
             }
             else

@@ -154,7 +154,7 @@ namespace CToSaM1
 
             double avgDiameter = diametersSum / areasNum;
 
-            double areasNumPerVolume = (2 * areasNum) / (Math.PI * avgDiameter);
+            double areasNumPerVolume = 2 / Math.PI * areasNum / (avgDiameter / mkmsInMm);
 
             double volumeRatio = coloredPixelsNum / pixelsInPicture;
 

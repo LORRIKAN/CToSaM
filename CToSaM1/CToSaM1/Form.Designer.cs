@@ -76,7 +76,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1121, 33);
+            this.menuStrip.Size = new System.Drawing.Size(1121, 36);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -85,7 +85,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(69, 29);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(69, 32);
             this.fileToolStripMenuItem.Text = "Файл";
             // 
             // openToolStripMenuItem
@@ -104,7 +104,7 @@
             this.splitContainer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer.IsSplitterFixed = true;
-            this.splitContainer.Location = new System.Drawing.Point(0, 33);
+            this.splitContainer.Location = new System.Drawing.Point(0, 36);
             this.splitContainer.Name = "splitContainer";
             this.splitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -125,8 +125,8 @@
             this.splitContainer.Panel2.Controls.Add(this.abortButt);
             this.splitContainer.Panel2.Controls.Add(this.progressBar);
             this.splitContainer.Panel2.Controls.Add(this.countButt);
-            this.splitContainer.Size = new System.Drawing.Size(1121, 646);
-            this.splitContainer.SplitterDistance = 395;
+            this.splitContainer.Size = new System.Drawing.Size(1121, 643);
+            this.splitContainer.SplitterDistance = 393;
             this.splitContainer.TabIndex = 1;
             // 
             // splitContainer1
@@ -144,7 +144,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(1121, 395);
+            this.splitContainer1.Size = new System.Drawing.Size(1121, 393);
             this.splitContainer1.SplitterDistance = 361;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -153,7 +153,7 @@
             this.pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox.Location = new System.Drawing.Point(0, 0);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(357, 391);
+            this.pictureBox.Size = new System.Drawing.Size(357, 389);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
@@ -163,7 +163,7 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(752, 391);
+            this.pictureBox1.Size = new System.Drawing.Size(752, 389);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
@@ -233,9 +233,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(123, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(136, 20);
+            this.label1.Size = new System.Drawing.Size(144, 20);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Длина картинки:";
+            this.label1.Text = "Высота картинки:";
             // 
             // dataGridView
             // 
@@ -258,7 +258,7 @@
             this.dataGridView.RowHeadersWidth = 62;
             this.dataGridView.RowTemplate.Height = 28;
             this.dataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGridView.Size = new System.Drawing.Size(1117, 135);
+            this.dataGridView.Size = new System.Drawing.Size(1117, 134);
             this.dataGridView.TabIndex = 4;
             // 
             // AreasNum
