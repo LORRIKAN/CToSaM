@@ -27,7 +27,7 @@ namespace CToSaM1
             {
                 int randomArgbColor = colorRandomizer.Next(Color.Navy.ToArgb(), Color.Red.ToArgb());
                 Color = Color.FromArgb(randomArgbColor);
-            } while (Color.IsBlack() && Color.IsWhite());
+            } while (Color.IsBlack() || Color.IsWhite());
         }
 
         private static readonly Random colorRandomizer = new Random();

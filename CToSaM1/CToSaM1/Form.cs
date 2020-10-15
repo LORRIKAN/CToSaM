@@ -31,6 +31,7 @@ namespace CToSaM1
             {
                 progressBar.Value = 0;
                 progressLbl.Hide();
+                abortButt.Enabled = true;
             }
             else if (e.Error != null)
             {
@@ -125,6 +126,7 @@ namespace CToSaM1
 
         private void AbortButtClick(object sender, EventArgs e)
         {
+            abortButt.Enabled = false;
             AbortCalculating();
         }
 

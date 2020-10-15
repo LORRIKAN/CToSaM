@@ -70,7 +70,7 @@ namespace CToSaM1
                 volumeRatio), string.Format("{0:F} с", algorithmWorkTimeSec))));
             }
             else
-                form.OnCalculationCompleted(e, null, null, null, null, null, null);
+                form.Invoke(new Action(() => form.OnCalculationCompleted(e, null, null, null, null, null, null)));
         }
 
         private void AbortCalculating() => backgroundWorker.CancelAsync();

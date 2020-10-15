@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -142,14 +143,20 @@ namespace CToSaM1
             double coloredPixelsNum = 0;
             double diametersSum = 0;
             const double mkmsInMm = 1000;
-            double mkmsInPixel = ((pictureHeightInMms * mkmsInMm) * (pictureWidthInMms * mkmsInMm)) / (picture.Width * picture.Height);
-            Parallel.ForEach(coloredAreas, area => { coloredPixelsNum += area.Pixels.Count; diametersSum += area.CalculateDiameter(mkmsInPixel); });
+            double pixelsInPicture = picture.Width * picture.Height;
+            double mkmsInPicture = (pictureHeightInMms * mkmsInMm) * (pictureWidthInMms * mkmsInMm);
+            double mkmsInPixel = mkmsInPicture / pixelsInPicture;
+            foreach (Area area in coloredAreas)
+            { 
+                coloredPixelsNum += area.Pixels.Count; 
+                diametersSum += area.CalculateDiameter(mkmsInPixel);
+            }
 
             double avgDiameter = diametersSum / areasNum;
 
-            double areasNumPerVolume = areasNum / avgDiameter;
+            double areasNumPerVolume = (2 * areasNum) / (Math.PI * avgDiameter);
 
-            double volumeRatio = coloredPixelsNum / (picture.Height * picture.Width);
+            double volumeRatio = coloredPixelsNum / pixelsInPicture;
 
             double algorithmWorkTimeSec = stopwatch.Elapsed.TotalSeconds;
 
